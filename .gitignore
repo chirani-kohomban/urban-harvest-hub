@@ -9,7 +9,6 @@ dev-dist/
 # Environment variables (Secrets)
 .env
 .env.local
-.env.production
 
 # IDE and OS files
 .vscode/
