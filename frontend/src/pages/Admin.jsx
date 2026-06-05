@@ -37,22 +37,22 @@ function Admin() {
 
   const fetchDashboardData = async () => {
     try {
-      const statsRes = await axios.get(`\${import.meta.env.VITE_API_URL}/stats`);
+      const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/stats`);
       setStats(statsRes.data);
 
-      const prodRes = await axios.get(`\${import.meta.env.VITE_API_URL}/products`);
+      const prodRes = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
       setProducts(prodRes.data);
 
-      const workRes = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops`);
+      const workRes = await axios.get(`${import.meta.env.VITE_API_URL}/workshops`);
       setWorkshops(workRes.data);
 
-      const eventRes = await axios.get(`\${import.meta.env.VITE_API_URL}/events`);
+      const eventRes = await axios.get(`${import.meta.env.VITE_API_URL}/events`);
       setEvents(eventRes.data);
 
-      const wReqRes = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops/requests`);
+      const wReqRes = await axios.get(`${import.meta.env.VITE_API_URL}/workshops/requests`);
       setWorkshopRequests(wReqRes.data);
 
-      const eRegRes = await axios.get(`\${import.meta.env.VITE_API_URL}/events/registrations`);
+      const eRegRes = await axios.get(`${import.meta.env.VITE_API_URL}/events/registrations`);
       setEventRegistrations(eRegRes.data);
     } catch (err) {
       console.error("Error fetching admin dashboard data:", err);
@@ -68,7 +68,7 @@ function Admin() {
     e.preventDefault();
     setLoginError("");
     try {
-      const res = await axios.post(`\${import.meta.env.VITE_API_URL}/admin/login`, loginForm);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/login`, loginForm);
       if (res.data.success) {
         setToken(res.data.token);
         localStorage.setItem("adminToken", res.data.token);
@@ -97,7 +97,7 @@ function Admin() {
         setFormMessage(res.data.message);
       } else {
         // Create
-        const res = await axios.post(`\${import.meta.env.VITE_API_URL}/products`, productForm);
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/products`, productForm);
         setFormMessage(res.data.message);
       }
       setProductForm({ id: null, name: "", category: "", price: "", image: "", description: "", rating: "" });
@@ -134,7 +134,7 @@ function Admin() {
         const res = await axios.put(`${import.meta.env.VITE_API_URL}/workshops/${workshopForm.id}`, workshopForm);
         setFormMessage(res.data.message);
       } else {
-        const res = await axios.post(`\${import.meta.env.VITE_API_URL}/workshops`, workshopForm);
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/workshops`, workshopForm);
         setFormMessage(res.data.message);
       }
       setWorkshopForm({ id: null, title: "", description: "", date: "", location: "", slots: "", image: "" });
@@ -182,7 +182,7 @@ function Admin() {
         const res = await axios.put(`${import.meta.env.VITE_API_URL}/events/${eventForm.id}`, eventForm);
         setFormMessage(res.data.message);
       } else {
-        const res = await axios.post(`\${import.meta.env.VITE_API_URL}/events`, eventForm);
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/events`, eventForm);
         setFormMessage(res.data.message);
       }
       setEventForm({ id: null, title: "", description: "", date: "", location: "", category: "", image: "" });

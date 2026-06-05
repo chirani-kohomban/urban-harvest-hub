@@ -22,7 +22,7 @@ function Events() {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/events`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/events`);
       setEvents(res.data);
       setLoading(false);
     } catch (err) {
@@ -34,7 +34,7 @@ function Events() {
 
   const fetchRegistrations = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/events/registrations`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/events/registrations`);
       const regMap = {};
       res.data.forEach((r) => {
         regMap[r.event_id] = true;

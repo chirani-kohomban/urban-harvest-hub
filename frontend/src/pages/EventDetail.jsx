@@ -27,7 +27,7 @@ function EventDetail() {
 
   const fetchEventDetails = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/events`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/events`);
       const found = res.data.find((e) => e.id === Number(id));
       if (found) {
         setEvent(found);
@@ -74,7 +74,7 @@ function EventDetail() {
     }
 
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL}/events/register`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/events/register`, {
         event_id: id,
         user_name: userName.trim(),
         email: email.trim(),

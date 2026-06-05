@@ -27,7 +27,7 @@ function WorkshopDetail() {
 
   const fetchWorkshopDetails = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/workshops`);
       const found = res.data.find((w) => w.id === Number(id));
       if (found) {
         setWorkshop(found);
@@ -74,7 +74,7 @@ function WorkshopDetail() {
     }
 
     try {
-      await axios.post(`\${import.meta.env.VITE_API_URL}/workshops/request`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/workshops/request`, {
         workshop_id: id,
         user_name: userName.trim(),
         email: email.trim(),
