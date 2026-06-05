@@ -22,7 +22,7 @@ function NotificationButton() {
 
       if (status === "granted") {
         // Send simulated subscription to backend
-        await axios.post("http://localhost:5000/notifications/subscribe", {
+        await axios.post(`\${import.meta.env.VITE_API_URL}/notifications/subscribe`, {
           user_name: "Urban Farmer",
           endpoint: "mock-endpoint-url",
           keys: {

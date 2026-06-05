@@ -17,7 +17,7 @@ function Products() {
   // FETCH PRODUCTS
   useEffect(() => {
     axios
-      .get("http://localhost:5000/products")
+      .get(`\${import.meta.env.VITE_API_URL}/products`)
       .then((res) => {
         setProducts(res.data);
         setLoading(false);
@@ -31,7 +31,7 @@ function Products() {
   // DELETE PRODUCT
   const deleteProduct = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/products/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/products/${id}`);
       setProducts(products.filter((item) => item.id !== id));
     } catch (err) {
       console.log(err);

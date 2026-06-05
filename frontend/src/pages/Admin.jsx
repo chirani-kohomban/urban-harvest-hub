@@ -37,22 +37,22 @@ function Admin() {
 
   const fetchDashboardData = async () => {
     try {
-      const statsRes = await axios.get("http://localhost:5000/stats");
+      const statsRes = await axios.get(`\${import.meta.env.VITE_API_URL}/stats`);
       setStats(statsRes.data);
 
-      const prodRes = await axios.get("http://localhost:5000/products");
+      const prodRes = await axios.get(`\${import.meta.env.VITE_API_URL}/products`);
       setProducts(prodRes.data);
 
-      const workRes = await axios.get("http://localhost:5000/workshops");
+      const workRes = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops`);
       setWorkshops(workRes.data);
 
-      const eventRes = await axios.get("http://localhost:5000/events");
+      const eventRes = await axios.get(`\${import.meta.env.VITE_API_URL}/events`);
       setEvents(eventRes.data);
 
-      const wReqRes = await axios.get("http://localhost:5000/workshops/requests");
+      const wReqRes = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops/requests`);
       setWorkshopRequests(wReqRes.data);
 
-      const eRegRes = await axios.get("http://localhost:5000/events/registrations");
+      const eRegRes = await axios.get(`\${import.meta.env.VITE_API_URL}/events/registrations`);
       setEventRegistrations(eRegRes.data);
     } catch (err) {
       console.error("Error fetching admin dashboard data:", err);
@@ -68,7 +68,7 @@ function Admin() {
     e.preventDefault();
     setLoginError("");
     try {
-      const res = await axios.post("http://localhost:5000/admin/login", loginForm);
+      const res = await axios.post(`\${import.meta.env.VITE_API_URL}/admin/login`, loginForm);
       if (res.data.success) {
         setToken(res.data.token);
         localStorage.setItem("adminToken", res.data.token);
@@ -93,11 +93,11 @@ function Admin() {
     try {
       if (productForm.id) {
         // Update
-        const res = await axios.put(`http://localhost:5000/products/${productForm.id}`, productForm);
+        const res = await axios.put(`${import.meta.env.VITE_API_URL}/products/${productForm.id}`, productForm);
         setFormMessage(res.data.message);
       } else {
         // Create
-        const res = await axios.post("http://localhost:5000/products", productForm);
+        const res = await axios.post(`\${import.meta.env.VITE_API_URL}/products`, productForm);
         setFormMessage(res.data.message);
       }
       setProductForm({ id: null, name: "", category: "", price: "", image: "", description: "", rating: "" });
@@ -115,7 +115,7 @@ function Admin() {
   const deleteProduct = async (id) => {
     if (!confirm("Are you sure?")) return;
     try {
-      await axios.delete(`http://localhost:5000/products/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/products/${id}`);
       fetchDashboardData();
     } catch (err) {
       console.error(err);
@@ -131,10 +131,10 @@ function Admin() {
     e.preventDefault();
     try {
       if (workshopForm.id) {
-        const res = await axios.put(`http://localhost:5000/workshops/${workshopForm.id}`, workshopForm);
+        const res = await axios.put(`${import.meta.env.VITE_API_URL}/workshops/${workshopForm.id}`, workshopForm);
         setFormMessage(res.data.message);
       } else {
-        const res = await axios.post("http://localhost:5000/workshops", workshopForm);
+        const res = await axios.post(`\${import.meta.env.VITE_API_URL}/workshops`, workshopForm);
         setFormMessage(res.data.message);
       }
       setWorkshopForm({ id: null, title: "", description: "", date: "", location: "", slots: "", image: "" });
@@ -154,7 +154,7 @@ function Admin() {
   const deleteWorkshop = async (id) => {
     if (!confirm("Are you sure?")) return;
     try {
-      await axios.delete(`http://localhost:5000/workshops/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/workshops/${id}`);
       fetchDashboardData();
     } catch (err) {
       console.error(err);
@@ -163,7 +163,7 @@ function Admin() {
 
   const updateRequestStatus = async (reqId, status) => {
     try {
-      await axios.put(`http://localhost:5000/workshops/requests/${reqId}`, { status });
+      await axios.put(`${import.meta.env.VITE_API_URL}/workshops/requests/${reqId}`, { status });
       fetchDashboardData();
     } catch (err) {
       console.error(err);
@@ -179,10 +179,10 @@ function Admin() {
     e.preventDefault();
     try {
       if (eventForm.id) {
-        const res = await axios.put(`http://localhost:5000/events/${eventForm.id}`, eventForm);
+        const res = await axios.put(`${import.meta.env.VITE_API_URL}/events/${eventForm.id}`, eventForm);
         setFormMessage(res.data.message);
       } else {
-        const res = await axios.post("http://localhost:5000/events", eventForm);
+        const res = await axios.post(`\${import.meta.env.VITE_API_URL}/events`, eventForm);
         setFormMessage(res.data.message);
       }
       setEventForm({ id: null, title: "", description: "", date: "", location: "", category: "", image: "" });
@@ -201,7 +201,7 @@ function Admin() {
   const deleteEvent = async (id) => {
     if (!confirm("Are you sure?")) return;
     try {
-      await axios.delete(`http://localhost:5000/events/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/events/${id}`);
       fetchDashboardData();
     } catch (err) {
       console.error(err);

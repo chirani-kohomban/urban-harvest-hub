@@ -23,7 +23,7 @@ function Workshops() {
 
   const fetchWorkshops = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/workshops");
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops`);
       setWorkshops(res.data);
       setLoading(false);
     } catch (err) {
@@ -35,7 +35,7 @@ function Workshops() {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/workshops/requests");
+      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/workshops/requests`);
       // Map requests by workshop_id for the current dummy user
       const reqMap = {};
       res.data.forEach((r) => {

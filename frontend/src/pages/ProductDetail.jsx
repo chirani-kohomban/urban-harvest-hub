@@ -11,7 +11,7 @@ function ProductDetail() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/products")
+      .get(`\${import.meta.env.VITE_API_URL}/products`)
       .then((res) => {
         const foundProduct = res.data.find(
           (item) => item.id === Number(id)
