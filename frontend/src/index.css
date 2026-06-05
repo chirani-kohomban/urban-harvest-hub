@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom reusable component */
+@layer components {
+
+  .product-card {
+    @apply border rounded-lg p-4 shadow-md bg-white hover:shadow-xl transition;
+  }
+html{
+  transition: all 0.3s ease;
+}
+}
