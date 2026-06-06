@@ -76,7 +76,58 @@ const queries = [
   // Seed Events
   `INSERT INTO events (title, description, date, location, category, image) 
    SELECT 'Summer Harvest Festival', 'Join the community to celebrate this seasons bountiful harvest.', '2026-08-20 14:00:00', 'City Park', 'Festival', 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-   FROM DUAL WHERE NOT EXISTS (SELECT * FROM events WHERE title='Summer Harvest Festival')`
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM events WHERE title='Summer Harvest Festival')`,
+
+  // Additional Products
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Organic Lettuce', 'Vegetables', 3.99, 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Crisp and fresh organic lettuce, perfect for salads.', 4.7
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Organic Lettuce')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Fresh Carrots', 'Vegetables', 2.99, 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Sweet and crunchy farm-fresh carrots.', 4.6
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Fresh Carrots')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Heirloom Peppers', 'Vegetables', 5.99, 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Colorful heirloom peppers with rich, complex flavors.', 4.8
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Heirloom Peppers')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Organic Spinach', 'Vegetables', 4.49, 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Tender organic spinach leaves, nutrient-packed and versatile.', 4.7
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Organic Spinach')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Cherry Tomatoes', 'Vegetables', 3.49, 'https://images.unsplash.com/photo-1561136594-7f68413baa99?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Bite-sized cherry tomatoes bursting with sweetness.', 4.9
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Cherry Tomatoes')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Fresh Mint', 'Herbs', 1.99, 'https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Fragrant fresh mint, great for teas, cocktails, and cooking.', 4.8
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Fresh Mint')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Organic Parsley', 'Herbs', 2.99, 'https://images.unsplash.com/photo-1590868309235-ea34bed7bd7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Bright and fresh organic parsley, a kitchen staple.', 4.6
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Organic Parsley')`,
+
+  `INSERT INTO products (name, category, price, image, description, rating)
+   SELECT 'Sunflower Seeds', 'Seeds', 6.99, 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Premium sunflower seeds for planting or snacking.', 4.5
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Sunflower Seeds')`,
+
+  // Additional Workshops
+  `INSERT INTO workshops (title, description, date, location, slots, image)
+   SELECT 'Indoor Herb Garden', 'Learn to grow herbs indoors year-round.', '2026-07-22 14:00:00', 'Community Hall', 20, 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM workshops WHERE title='Indoor Herb Garden')`,
+
+  `INSERT INTO workshops (title, description, date, location, slots, image)
+   SELECT 'Composting Basics', 'Master the art of composting for your garden.', '2026-08-05 10:00:00', 'Environmental Center', 25, 'https://images.unsplash.com/photo-1542601906897-ecd3f7d0e2e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM workshops WHERE title='Composting Basics')`,
+
+  // Additional Events
+  `INSERT INTO events (title, description, date, location, category, image)
+   SELECT 'Farmers Market Day', 'Weekly farmers market with local vendors.', '2026-06-15 09:00:00', 'Central Square', 'Market', 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM events WHERE title='Farmers Market Day')`,
+
+  `INSERT INTO events (title, description, date, location, category, image)
+   SELECT 'Seed Swap Meetup', 'Exchange seeds and gardening tips with fellow enthusiasts.', '2026-07-10 18:00:00', 'Community Garden', 'Meetup', 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM events WHERE title='Seed Swap Meetup')`
 ];
 
 db.connect((err) => {
