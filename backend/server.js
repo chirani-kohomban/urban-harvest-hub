@@ -9,11 +9,20 @@ app.use(cors());
 app.use(express.json());
 
 // DB CONNECTION
-if (!process.env.MYSQL_URL) {
-  console.error('❌ Missing MYSQL_URL environment variable. Check Railway variables.');
-  process.exit(1);
+let dbConfig;
+if (process.env.MYSQL_URL) {
+  dbConfig = process.env.MYSQL_URL;
+} else {
+  dbConfig = {
+    host: process.env.DB_HOST || process.env.MYSQLHOST || "localhost",
+    port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
+    user: process.env.DB_USER || process.env.MYSQLUSER || "root",
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || "",
+    database: process.env.DB_NAME || process.env.MYSQLDATABASE || "urban_harvest_hub"
+  };
 }
-const db = mysql.createConnection(process.env.MYSQL_URL);
+const db = mysql.createConnection(dbConfig);
+
 
 db.connect((err) => {
   if (err) {
