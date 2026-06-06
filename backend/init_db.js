@@ -63,21 +63,21 @@ const queries = [
   // Seed Products
   `INSERT INTO products (name, category, price, image, description, rating) 
    SELECT 'Organic Tomatoes', 'Vegetables', 4.99, 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Freshly picked organic tomatoes from local farms.', 4.8
-   WHERE NOT EXISTS (SELECT * FROM products WHERE name='Organic Tomatoes')`,
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Organic Tomatoes')`,
   
   `INSERT INTO products (name, category, price, image, description, rating) 
    SELECT 'Fresh Basil Bundle', 'Herbs', 2.49, 'https://images.unsplash.com/photo-1618164420084-29ec3ce4970f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', 'Aromatic fresh basil perfect for pesto.', 4.9
-   WHERE NOT EXISTS (SELECT * FROM products WHERE name='Fresh Basil Bundle')`,
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM products WHERE name='Fresh Basil Bundle')`,
 
   // Seed Workshops
   `INSERT INTO workshops (title, description, date, location, slots, image) 
    SELECT 'Balcony Gardening 101', 'Learn how to maximize your small apartment balcony to grow fresh vegetables.', '2026-07-15 10:00:00', 'Downtown Center', 15, 'https://images.unsplash.com/photo-1416879598555-46747209e99a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-   WHERE NOT EXISTS (SELECT * FROM workshops WHERE title='Balcony Gardening 101')`,
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM workshops WHERE title='Balcony Gardening 101')`,
    
   // Seed Events
   `INSERT INTO events (title, description, date, location, category, image) 
    SELECT 'Summer Harvest Festival', 'Join the community to celebrate this seasons bountiful harvest.', '2026-08-20 14:00:00', 'City Park', 'Festival', 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-   WHERE NOT EXISTS (SELECT * FROM events WHERE title='Summer Harvest Festival')`
+   FROM DUAL WHERE NOT EXISTS (SELECT * FROM events WHERE title='Summer Harvest Festival')`
 ];
 
 db.connect((err) => {
