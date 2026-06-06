@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "../i18n";
 
-function WorkshopCard({ workshop, isRequested, onRequest }) {
+function WorkshopCard({ workshop, isRequested, onRequest, onDelete }) {
   const { t } = useTranslation();
 
   const formattedDate = new Date(workshop.date).toLocaleDateString(undefined, {
@@ -62,24 +62,36 @@ function WorkshopCard({ workshop, isRequested, onRequest }) {
             {t("workshops.viewDetails")}
           </Link>
 
-          <button
-            onClick={() => onRequest && onRequest(workshop.id)}
-            disabled={isRequested || workshop.slots <= 0}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm transition focus:outline-none focus:ring-2 focus:ring-green-500 ${
-              isRequested
-                ? "bg-gray-400 dark:bg-gray-600 cursor-default"
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onRequest && onRequest(workshop.id)}
+              disabled={isRequested || workshop.slots <= 0}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm transition focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                isRequested
+                  ? "bg-gray-400 dark:bg-gray-600 cursor-default"
+                  : workshop.slots <= 0
+                  ? "bg-red-500 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+              aria-label={isRequested ? `Already requested ${workshop.title}` : workshop.slots <= 0 ? `${workshop.title} is fully booked` : `Request to join ${workshop.title}`}
+            >
+              {isRequested
+                ? t("workshops.requested")
                 : workshop.slots <= 0
-                ? "bg-red-500 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700"
-            }`}
-            aria-label={isRequested ? `Already requested ${workshop.title}` : workshop.slots <= 0 ? `${workshop.title} is fully booked` : `Request to join ${workshop.title}`}
-          >
-            {isRequested
-              ? t("workshops.requested")
-              : workshop.slots <= 0
-              ? "Fully Booked"
-              : t("workshops.requestJoin")}
-          </button>
+                ? "Fully Booked"
+                : t("workshops.requestJoin")}
+            </button>
+
+            {onDelete && (
+              <button
+                onClick={() => onDelete(workshop.id)}
+                className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded transition shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                aria-label={`Delete ${workshop.title}`}
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </article>
