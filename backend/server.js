@@ -10,10 +10,10 @@ app.use(express.json());
 
 // DB CONNECTION
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "urban_harvest_hub"
+  host: process.env.DB_HOST || process.env.MYSQLHOST || "localhost",
+  user: process.env.DB_USER || process.env.MYSQLUSER || "root",
+  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || "",
+  database: process.env.DB_NAME || process.env.MYSQLDATABASE || "urban_harvest_hub"
 });
 
 db.connect((err) => {
