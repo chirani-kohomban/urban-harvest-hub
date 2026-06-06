@@ -5,16 +5,27 @@ precacheAndRoute(self.__WB_MANIFEST)
 
 // Listen for push events
 self.addEventListener('push', function(event) {
-  const data = event.data ? event.data.text() : 'Default Push Notification'
-  
+  let title = 'Urban Harvest Hub';
+  let body = 'Default Push Notification';
+
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      title = data.title || title;
+      body = data.body || body;
+    } catch (e) {
+      body = event.data.text();
+    }
+  }
+
   const options = {
-    body: data,
+    body: body,
     icon: '/pwa-192x192.png',
-    badge: '/pwa-192x192.png'
+    badge: '/favicon.svg'
   }
 
   event.waitUntil(
-    self.registration.showNotification('Urban Harvest Hub', options)
+    self.registration.showNotification(title, options)
   )
 })
 

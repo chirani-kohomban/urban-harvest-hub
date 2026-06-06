@@ -10,6 +10,17 @@ function NotificationButton() {
     }
   }, []);
 
+  const urlBase64ToUint8Array = (base64String) => {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  };
+
   const subscribeToNotifications = async () => {
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notifications.");
@@ -20,33 +31,22 @@ function NotificationButton() {
       const status = await Notification.requestPermission();
       setPermission(status);
 
-      if (status === "granted") {
-        // Send simulated subscription to backend
-        await axios.post(`${import.meta.env.VITE_API_URL}/notifications/subscribe`, {
-          user_name: "Urban Farmer",
-          endpoint: "mock-endpoint-url",
-          keys: {
-            auth: "mock-auth-key",
-            p256dh: "mock-p256dh-key"
-          }
-        }).catch((err) => console.log("Backend subscription save skipped/mocked", err));
+      if (status === "granted" && "serviceWorker" in navigator) {
+        const registration = await navigator.serviceWorker.ready;
+        
+        // Fetch VAPID public key
+        const vapidRes = await axios.get(`${import.meta.env.VITE_API_URL}/notifications/vapidPublicKey`);
+        const { publicKey } = vapidRes.data;
+        
+        const subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey)
+        });
 
-        // Show push notification
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.ready.then((registration) => {
-            registration.showNotification("Urban Harvest Hub 🌱", {
-              body: "Successfully subscribed to notifications!",
-              icon: "/pwa-192x192.png",
-              badge: "/favicon.svg"
-            });
-          });
-        } else {
-          new Notification("Urban Harvest Hub 🌱", {
-            body: "Successfully subscribed to notifications!",
-            icon: "/pwa-192x192.png",
-            badge: "/favicon.svg"
-          });
-        }
+        // Send subscription to backend
+        await axios.post(`${import.meta.env.VITE_API_URL}/notifications/subscribe`, subscription);
+
+        alert("Successfully subscribed to notifications!");
       }
     } catch (error) {
       console.error("Error subscribing to notifications:", error);

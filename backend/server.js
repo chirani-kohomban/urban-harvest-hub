@@ -319,9 +319,66 @@ app.get("/events/registrations", (req, res) => {
    NOTIFICATIONS
 ===================== */
 
+const webpush = require('web-push');
+
+// Setup web-push
+const publicVapidKey = 'BMpXJ_xHtf7gf0Ej_CAlO4itX9hW_WIM3gnNb0Hsz_hS8fDiLzVj-s4xL260NEK5mX-jxvTTPIsLqNy3syYVuCk';
+const privateVapidKey = 'b2geEqxn31hIrJJAJDY8mbwaHAQohjpnmSzL0ThuBI4';
+webpush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
+
+// Create table if missing (simple hack)
+db.query(`CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  endpoint VARCHAR(500) NOT NULL UNIQUE,
+  p256dh VARCHAR(255) NOT NULL,
+  auth VARCHAR(255) NOT NULL
+)`, (err) => { if(err) console.error("Push Table error:", err.message); });
+
+// GET PUBLIC KEY
+app.get("/notifications/vapidPublicKey", (req, res) => {
+  res.json({ publicKey: publicVapidKey });
+});
+
+// SUBSCRIBE
 app.post("/notifications/subscribe", (req, res) => {
-  console.log("Push Notification Subscription received:", req.body);
-  res.json({ message: "Subscription stored successfully" });
+  const subscription = req.body;
+  
+  if (!subscription || !subscription.endpoint || !subscription.keys) {
+    return res.status(400).json({ error: "Invalid subscription format" });
+  }
+
+  const { endpoint, keys: { p256dh, auth } } = subscription;
+
+  const sql = "INSERT IGNORE INTO push_subscriptions (endpoint, p256dh, auth) VALUES (?, ?, ?)";
+  db.query(sql, [endpoint, p256dh, auth], (err) => {
+    if (err) return res.status(500).json(err);
+    res.status(201).json({ message: "Subscription added successfully" });
+    
+    // Send immediate welcome push!
+    const payload = JSON.stringify({ title: 'Welcome to Urban Harvest Hub 🌱', body: 'Push notifications are now active!' });
+    webpush.sendNotification(subscription, payload).catch(err => console.error(err));
+  });
+});
+
+// ADMIN: SEND PUSH
+app.post("/notifications/send", (req, res) => {
+  const { title, body } = req.body;
+  const payload = JSON.stringify({ title, body });
+
+  db.query("SELECT * FROM push_subscriptions", (err, subs) => {
+    if (err) return res.status(500).json(err);
+
+    const promises = subs.map(sub => {
+      const pushSub = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
+      return webpush.sendNotification(pushSub, payload).catch(err => {
+        if (err.statusCode === 410) {
+          db.query("DELETE FROM push_subscriptions WHERE id = ?", [sub.id]);
+        }
+      });
+    });
+
+    Promise.all(promises).then(() => res.json({ message: "Notifications sent!" }));
+  });
 });
 
 const PORT = process.env.PORT || 5000;
