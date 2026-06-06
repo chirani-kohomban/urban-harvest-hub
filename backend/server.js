@@ -6,6 +6,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Admin authentication middleware
+const adminAuth = (req, res, next) => {
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const providedPassword = req.headers['x-admin-password'];
+
+  if (providedPassword !== adminPassword) {
+    return res.status(401).json({ message: 'Unauthorized: Admin password required' });
+  }
+  next();
+};
+
 // DB CONNECTION
 const db = mysql.createConnection({
   host: process.env.DB_HOST || process.env.MYSQLHOST || "localhost",
@@ -64,11 +75,12 @@ app.put("/products/:id", (req, res) => {
   });
 });
 
-// DELETE
-app.delete("/products/:id", (req, res) => {
-  db.query("DELETE FROM products WHERE id=?", [req.params.id], (err) => {
+// DELETE (admin only)
+app.delete("/products/:id", adminAuth, (req, res) => {
+  const { id } = req.params;
+  db.query('DELETE FROM products WHERE id = ?', [id], (err) => {
     if (err) return res.status(500).json(err);
-    res.json({ message: "Product deleted" });
+    res.json({ message: 'Product deleted successfully' });
   });
 });
 
@@ -167,11 +179,12 @@ app.put("/workshops/:id", (req, res) => {
   });
 });
 
-// DELETE WORKSHOP
-app.delete("/workshops/:id", (req, res) => {
-  db.query("DELETE FROM workshops WHERE id=?", [req.params.id], (err) => {
+// DELETE WORKSHOP (admin only)
+app.delete("/workshops/:id", adminAuth, (req, res) => {
+  const { id } = req.params;
+  db.query('DELETE FROM workshops WHERE id = ?', [id], (err) => {
     if (err) return res.status(500).json(err);
-    res.json({ message: "Workshop deleted" });
+    res.json({ message: 'Workshop deleted successfully' });
   });
 });
 
@@ -270,11 +283,12 @@ app.put("/events/:id", (req, res) => {
   });
 });
 
-// DELETE EVENT
-app.delete("/events/:id", (req, res) => {
-  db.query("DELETE FROM events WHERE id=?", [req.params.id], (err) => {
+// DELETE EVENT (admin only)
+app.delete("/events/:id", adminAuth, (req, res) => {
+  const { id } = req.params;
+  db.query('DELETE FROM events WHERE id = ?', [id], (err) => {
     if (err) return res.status(500).json(err);
-    res.json({ message: "Event deleted" });
+    res.json({ message: 'Event deleted successfully' });
   });
 });
 
