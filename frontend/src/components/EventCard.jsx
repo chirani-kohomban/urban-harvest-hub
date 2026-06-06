@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "../i18n";
 
-function EventCard({ event, isRegistered, onRegister }) {
+function EventCard({ event, isRegistered, onRegister, onDelete }) {
   const { t } = useTranslation();
 
   const formattedDate = new Date(event.date).toLocaleDateString(undefined, {
@@ -62,18 +62,30 @@ function EventCard({ event, isRegistered, onRegister }) {
             {t("events.viewDetails")}
           </Link>
 
-          <button
-            onClick={() => onRegister && onRegister(event.id)}
-            disabled={isRegistered}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm transition focus:outline-none focus:ring-2 focus:ring-green-500 ${
-              isRegistered
-                ? "bg-gray-400 dark:bg-gray-600 cursor-default"
-                : "bg-green-600 hover:bg-green-700"
-            }`}
-            aria-label={isRegistered ? `Already registered for ${event.title}` : `Register for ${event.title}`}
-          >
-            {isRegistered ? t("events.registered") : t("events.register")}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onRegister && onRegister(event.id)}
+              disabled={isRegistered}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm transition focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                isRegistered
+                  ? "bg-gray-400 dark:bg-gray-600 cursor-default"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+              aria-label={isRegistered ? `Already registered for ${event.title}` : `Register for ${event.title}`}
+            >
+              {isRegistered ? t("events.registered") : t("events.register")}
+            </button>
+
+            {onDelete && (
+              <button
+                onClick={() => onDelete(event.id)}
+                className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded transition shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                aria-label={`Delete ${event.title}`}
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </article>

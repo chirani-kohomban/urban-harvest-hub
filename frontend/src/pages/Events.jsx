@@ -14,6 +14,8 @@ function Events() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newEvent, setNewEvent] = useState({ title: "", description: "", date: "", location: "", category: "", image: "" });
 
   useEffect(() => {
     fetchEvents();
@@ -47,6 +49,34 @@ function Events() {
 
   const handleRegister = (eventId) => {
     navigate(`/events/${eventId}`);
+  };
+
+  // DELETE EVENT
+  const deleteEvent = async (id) => {
+    const password = prompt("Enter admin password to delete:");
+    if (!password) return;
+
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/events/${id}`, {
+        headers: { "x-admin-password": password }
+      });
+      setEvents(events.filter((item) => item.id !== id));
+    } catch (err) {
+      alert("Delete failed: " + (err.response?.data?.message || "Unauthorized"));
+    }
+  };
+
+  // ADD EVENT
+  const handleAddEvent = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/events`, newEvent);
+      setEvents([...events, res.data]);
+      setNewEvent({ title: "", description: "", date: "", location: "", category: "", image: "" });
+      setShowAddForm(false);
+    } catch (err) {
+      alert("Failed to add event");
+    }
   };
 
   // Get unique categories for filtering
@@ -93,6 +123,76 @@ function Events() {
         </div>
       </div>
 
+      {/* ADD NEW EVENT */}
+      <button
+        onClick={() => setShowAddForm(!showAddForm)}
+        className="mb-6 bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700"
+      >
+        {showAddForm ? "Hide Form" : "Add New Event"}
+      </button>
+
+      {showAddForm && (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg mb-6 border dark:border-gray-700">
+          <h2 className="text-xl font-bold mb-4">Add New Event</h2>
+          <form onSubmit={handleAddEvent} className="grid md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              placeholder="Event Title"
+              required
+              value={newEvent.title}
+              onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="text"
+              placeholder="Category"
+              required
+              value={newEvent.category}
+              onChange={(e) => setNewEvent({...newEvent, category: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="date"
+              required
+              value={newEvent.date}
+              onChange={(e) => setNewEvent({...newEvent, date: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="text"
+              placeholder="Location"
+              required
+              value={newEvent.location}
+              onChange={(e) => setNewEvent({...newEvent, location: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={newEvent.image}
+              onChange={(e) => setNewEvent({...newEvent, image: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <textarea
+              placeholder="Description"
+              rows="2"
+              required
+              value={newEvent.description}
+              onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
+              className="md:col-span-2 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <div className="md:col-span-2 flex gap-2">
+              <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">
+                Add Event
+              </button>
+              <button type="button" onClick={() => setShowAddForm(false)} className="flex-1 bg-gray-400 text-white py-2 rounded font-bold">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Loading */}
       {loading && (
         <div className="text-center py-12 text-gray-500 dark:text-gray-300">
@@ -122,6 +222,7 @@ function Events() {
             event={event}
             isRegistered={registrations[event.id]}
             onRegister={handleRegister}
+            onDelete={deleteEvent}
           />
         ))}
       </div>

@@ -14,6 +14,8 @@ function Workshops() {
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newWorkshop, setNewWorkshop] = useState({ title: "", description: "", date: "", location: "", slots: "", image: "" });
 
   // Fetch workshops and existing requests on mount
   useEffect(() => {
@@ -49,6 +51,34 @@ function Workshops() {
 
   const handleRequestJoin = (workshopId) => {
     navigate(`/workshops/${workshopId}`);
+  };
+
+  // DELETE WORKSHOP
+  const deleteWorkshop = async (id) => {
+    const password = prompt("Enter admin password to delete:");
+    if (!password) return;
+
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/workshops/${id}`, {
+        headers: { "x-admin-password": password }
+      });
+      setWorkshops(workshops.filter((item) => item.id !== id));
+    } catch (err) {
+      alert("Delete failed: " + (err.response?.data?.message || "Unauthorized"));
+    }
+  };
+
+  // ADD WORKSHOP
+  const handleAddWorkshop = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/workshops`, newWorkshop);
+      setWorkshops([...workshops, res.data]);
+      setNewWorkshop({ title: "", description: "", date: "", location: "", slots: "", image: "" });
+      setShowAddForm(false);
+    } catch (err) {
+      alert("Failed to add workshop");
+    }
   };
 
   // Get unique locations for dropdown filter
@@ -95,6 +125,77 @@ function Workshops() {
         </div>
       </div>
 
+      {/* ADD NEW WORKSHOP */}
+      <button
+        onClick={() => setShowAddForm(!showAddForm)}
+        className="mb-6 bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700"
+      >
+        {showAddForm ? "Hide Form" : "Add New Workshop"}
+      </button>
+
+      {showAddForm && (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg mb-6 border dark:border-gray-700">
+          <h2 className="text-xl font-bold mb-4">Add New Workshop</h2>
+          <form onSubmit={handleAddWorkshop} className="grid md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              placeholder="Workshop Title"
+              required
+              value={newWorkshop.title}
+              onChange={(e) => setNewWorkshop({...newWorkshop, title: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="text"
+              placeholder="Location"
+              required
+              value={newWorkshop.location}
+              onChange={(e) => setNewWorkshop({...newWorkshop, location: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="date"
+              required
+              value={newWorkshop.date}
+              onChange={(e) => setNewWorkshop({...newWorkshop, date: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="number"
+              placeholder="Available Slots"
+              min="1"
+              required
+              value={newWorkshop.slots}
+              onChange={(e) => setNewWorkshop({...newWorkshop, slots: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={newWorkshop.image}
+              onChange={(e) => setNewWorkshop({...newWorkshop, image: e.target.value})}
+              className="bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <textarea
+              placeholder="Description"
+              rows="2"
+              required
+              value={newWorkshop.description}
+              onChange={(e) => setNewWorkshop({...newWorkshop, description: e.target.value})}
+              className="md:col-span-2 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-gray-800 dark:text-white"
+            />
+            <div className="md:col-span-2 flex gap-2">
+              <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">
+                Add Workshop
+              </button>
+              <button type="button" onClick={() => setShowAddForm(false)} className="flex-1 bg-gray-400 text-white py-2 rounded font-bold">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Loading */}
       {loading && (
         <div className="text-center py-12 text-gray-500 dark:text-gray-300">
@@ -124,6 +225,7 @@ function Workshops() {
             workshop={workshop}
             isRequested={requests[workshop.id]}
             onRequest={handleRequestJoin}
+            onDelete={deleteWorkshop}
           />
         ))}
       </div>
