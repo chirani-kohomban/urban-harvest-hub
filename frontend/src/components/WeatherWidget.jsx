@@ -164,11 +164,17 @@ function WeatherWidget() {
           </div>
 
           <div className="flex flex-col items-center">
-            <img
-              src={`https://openweathermap.org/img/wn/${weather.weather?.[0]?.icon}@2x.png`}
-              alt={weather.weather?.[0]?.description || "Weather Icon"}
-              className="w-16 h-16 object-contain"
-            />
+            {weather.weather?.[0]?.icon ? (
+              <img
+                src={`https://openweathermap.org/img/wn/${weather.weather?.[0]?.icon}@2x.png`}
+                alt={weather.weather?.[0]?.description || "Weather Icon"}
+                className="w-16 h-16 object-contain"
+              />
+            ) : (
+              <div className="w-16 h-16 flex items-center justify-center text-gray-400 dark:text-gray-600 text-2xl">
+                ⛅
+              </div>
+            )}
             {weather.weather?.[0]?.main === "Mocked" && (
               <span className="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider">
                 Simulated

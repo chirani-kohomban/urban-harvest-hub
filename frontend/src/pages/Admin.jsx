@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "../i18n";
 import DashboardCard from "../components/DashboardCard";
+import PushSubscription from "./PushSubscription";
 
 function Admin() {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ function Admin() {
   const [loginError, setLoginError] = useState("");
 
   // Tab State
-  const [activeTab, setActiveTab] = useState("stats"); // stats, products, workshops, events, requests
+  const [activeTab, setActiveTab] = useState("stats"); // stats, products, workshops, events, requests, push
 
   // Lists State
   const [products, setProducts] = useState([]);
@@ -28,6 +29,9 @@ function Admin() {
   const [eventForm, setEventForm] = useState({ id: null, title: "", description: "", date: "", location: "", category: "", image: "" });
   
   const [formMessage, setFormMessage] = useState("");
+  // Push Notification Form State
+  const [pushForm, setPushForm] = useState({ title: "", body: "" });
+  const [pushResult, setPushResult] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -81,6 +85,22 @@ function Admin() {
   const handleLogout = () => {
     setToken("");
     localStorage.removeItem("adminToken");
+  };
+
+  // PUSH NOTIFICATION HANDLERS
+  const handlePushChange = (e) => {
+    setPushForm({ ...pushForm, [e.target.name]: e.target.value });
+  };
+
+  const handlePushSubmit = async (e) => {
+    e.preventDefault();
+    setPushResult("");
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/notifications/send`, pushForm);
+      setPushResult(res.data.message || "Push sent");
+    } catch (err) {
+      setPushResult(err.response?.data?.error || "Failed to send push");
+    }
   };
 
   // PRODUCT CRUD
@@ -310,7 +330,8 @@ function Admin() {
           { id: "products", label: t("admin.manageProducts") },
           { id: "workshops", label: t("admin.manageWorkshops") },
           { id: "events", label: t("admin.manageEvents") },
-          { id: "requests", label: "Join Requests" }
+          { id: "requests", label: "Join Requests" },
+          { id: "push", label: "Push Notifications" }
         ].map((tab) => (
           <button
             key={tab.id}
@@ -761,6 +782,46 @@ function Admin() {
       )}
 
       {/* 5. REQUESTS TAB */}
+      {activeTab === "push" && (
+         <section className="space-y-6">
+           <PushSubscription />
+           <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm max-w-md">
+             <form onSubmit={handlePushSubmit} className="space-y-4">
+               <div>
+                 <label htmlFor="push-title" className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Title</label>
+                 <input
+                   id="push-title"
+                   name="title"
+                   required
+                   value={pushForm.title}
+                   onChange={handlePushChange}
+                   className="w-full bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-sm text-gray-800 dark:text-white"
+                 />
+               </div>
+               <div>
+                 <label htmlFor="push-body" className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Message</label>
+                 <textarea
+                   id="push-body"
+                   name="body"
+                   rows={3}
+                   required
+                   value={pushForm.body}
+                   onChange={handlePushChange}
+                   className="w-full bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded p-2 text-sm text-gray-800 dark:text-white"
+                 />
+               </div>
+               <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">
+                 Send Push
+               </button>
+             </form>
+             {pushResult && (
+               <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm">
+                 {pushResult}
+               </div>
+             )}
+           </div>
+         </section>
+       )}
       {activeTab === "requests" && (
         <section className="space-y-8">          {/* Workshop requests */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden shadow-sm">

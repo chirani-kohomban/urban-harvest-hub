@@ -10,8 +10,10 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.js',
       registerType: 'autoUpdate',
+      injectRegister: 'inline',
       devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module'
       },
       manifest: {
         name: 'Urban Harvest Hub',

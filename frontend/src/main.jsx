@@ -5,17 +5,15 @@ import "./index.css";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LanguageProvider } from "./i18n.jsx";
 
+import { registerSW } from 'virtual:pwa-register';
+
 // Register Service Worker for PWA
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((reg) => {
-        console.log("Service Worker registered with scope:", reg.scope);
-      })
-      .catch((err) => {
-        console.error("Service Worker registration failed:", err);
-      });
+  registerSW({
+    immediate: true,
+    onRegisterError(error) {
+      console.error("Service Worker registration failed:", error);
+    }
   });
 }
 
